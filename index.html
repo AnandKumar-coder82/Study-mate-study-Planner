@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="StudyFlow - A collaborative, responsive, and interactive study planner web application for students. Track assignments, manage schedules, focus with Pomodoro, and analyze study habits.">
+  <meta name="author" content="Student Study Group (Team of 3)">
+  <meta name="theme-color" content="#4f46e5">
+  <title>StudyFlow — Smart Student Study Planner</title>
+
+  <!-- Google Fonts for modern typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Application Stylesheets -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+</head>
+<body>
+  <!-- Accessibility: Skip to Main Content Link -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- App Container Layout -->
+  <div class="app-layout">
+    
+    <!-- Collapsible / Responsive Sidebar Navigation -->
+    <aside class="app-sidebar" id="appSidebar" aria-label="Main Navigation">
+      <div class="sidebar-header">
+        <div class="brand-container">
+          <div class="brand-icon" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              <line x1="9" y1="7" x2="15" y2="7"></line>
+              <line x1="9" y1="11" x2="13" y2="11"></line>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <h1 class="brand-title">StudyFlow</h1>
+            <span class="brand-subtitle">Smart Student Suite</span>
+          </div>
+        </div>
+        <button class="sidebar-toggle-close" id="sidebarCloseBtn" aria-label="Close navigation menu" title="Close sidebar">
+          ✕
+        </button>
+      </div>
+
+      <!-- Quick Action: Add Task -->
+      <div class="sidebar-cta">
+        <button class="btn btn-primary btn-block" id="quickAddTaskBtn" aria-haspopup="dialog">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>New Study Task</span>
+        </button>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="sidebar-nav">
+        <ul class="nav-list">
+          <li class="nav-item">
+            <button class="nav-link active" data-view="dashboard" id="navDashboard">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+              </svg>
+              <span>Dashboard</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-view="tasks" id="navTasks">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 11l3 3L22 4"></path>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+              </svg>
+              <span>Task Board</span>
+              <span class="nav-badge" id="pendingTasksBadge">0</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-view="timetable" id="navTimetable">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <span>Weekly Schedule</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-view="pomodoro" id="navPomodoro">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <span>Focus Timer</span>
+              <span class="nav-pill-active" id="timerIndicatorDot" style="display:none;" title="Timer is running"></span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-view="analytics" id="navAnalytics">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+              </svg>
+              <span>Analytics & Habits</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Sidebar Footer Info / Student Group Credits -->
+      <div class="sidebar-footer">
+        <div class="study-streak-widget">
+          <div class="streak-icon">🔥</div>
+          <div class="streak-content">
+            <span class="streak-label">Study Streak</span>
+            <span class="streak-count" id="sidebarStreakCount">3 Days</span>
+          </div>
+        </div>
+        <div class="group-credit-card">
+          <p class="credit-heading">Student Team Project</p>
+          <p class="credit-names">Collaborative Web Dev</p>
+          <p class="credit-tag">HTML5 • CSS3 • Vanilla JS</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Sidebar Backdrop for Mobile Screens -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
+    <!-- Main Content Area -->
+    <div class="app-main">
+      
+      <!-- Top Application Header -->
+      <header class="app-header">
+        <div class="header-left">
+          <button class="menu-toggle-btn" id="menuToggleBtn" aria-label="Toggle navigation menu" title="Open navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          <div class="header-greeting">
+            <h2 class="view-title" id="pageTitle">Dashboard Overview</h2>
+            <p class="current-date-display" id="currentDateDisplay">Wednesday, November 11</p>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <!-- Live Focus Timer Capsule in Header -->
+          <div class="header-timer-capsule" id="headerTimerCapsule" title="Focus Timer status">
+            <span class="timer-dot"></span>
+            <span class="timer-time" id="headerTimerDisplay">25:00</span>
+          </div>
+
+          <!-- Notification Permission Request Button -->
+          <button class="icon-btn" id="notificationBtn" title="Enable study alerts & notifications" aria-label="Study Notifications">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+          </button>
+
+          <!-- Theme Toggle (Light / Dark Mode) -->
+          <button class="icon-btn theme-toggle-btn" id="themeToggleBtn" title="Toggle Light and Dark Mode" aria-label="Toggle theme">
+            <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </button>
+
+          <!-- Data Management (Export / Import / Reset) -->
+          <div class="dropdown-wrapper">
+            <button class="icon-btn" id="dataMenuBtn" title="Manage Study Data (Export/Import/Reset)" aria-haspopup="true" aria-expanded="false">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="1"></circle>
+                <circle cx="19" cy="12" r="1"></circle>
+                <circle cx="5" cy="12" r="1"></circle>
+              </svg>
+            </button>
+            <div class="dropdown-menu" id="dataDropdownMenu">
+              <button class="dropdown-item" id="exportJsonBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Export Backup (JSON)
+              </button>
+              <button class="dropdown-item" id="exportCsvBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="16" y2="17"></line></svg>
+                Export Tasks (CSV)
+              </button>
+              <label class="dropdown-item file-input-label" for="importJsonInput">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                Import Backup (JSON)
+                <input type="file" id="importJsonInput" accept=".json" class="sr-only">
+              </label>
+              <div class="dropdown-divider"></div>
+              <button class="dropdown-item danger" id="resetDataBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+                Reset to Sample Data
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Scrollable Content Views -->
+      <main class="main-body" id="main-content" tabindex="-1">
+
+        <!-- ========================================== -->
+        <!-- VIEW 1: DASHBOARD VIEW                    -->
+        <!-- ========================================== -->
+        <section class="view-section active" id="view-dashboard" aria-label="Dashboard Overview">
+          
+          <!-- Welcome Banner with Dynamic Motivation -->
+          <div class="dashboard-banner">
+            <div class="banner-content">
+              <span class="banner-tag">Student Command Center</span>
+              <h2 class="banner-heading" id="bannerGreeting">Ready to conquer your goals today?</h2>
+              <p class="banner-subtext" id="motivationalQuote">"Small daily efforts compound into extraordinary academic achievements."</p>
+            </div>
+            <div class="banner-actions">
+              <button class="btn btn-light" id="bannerStartStudyBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                Quick Focus Session
+              </button>
+            </div>
+          </div>
+
+          <!-- Key Metrics KPI Cards -->
+          <div class="stats-grid">
+            <article class="stat-card">
+              <div class="stat-icon-wrapper blue">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+              </div>
+              <div class="stat-details">
+                <span class="stat-title">Tasks Completed</span>
+                <div class="stat-metric-row">
+                  <span class="stat-number" id="dashCompletedTasks">0</span>
+                  <span class="stat-subtext" id="dashTotalTasks">/ 0 Total</span>
+                </div>
+                <div class="progress-bar-track">
+                  <div class="progress-bar-fill" id="taskProgressBar" style="width: 0%"></div>
+                </div>
+              </div>
+            </article>
+
+            <article class="stat-card">
+              <div class="stat-icon-wrapper amber">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              </div>
+              <div class="stat-details">
+                <span class="stat-title">Focus Time Today</span>
+                <div class="stat-metric-row">
+                  <span class="stat-number" id="dashFocusTime">0h 0m</span>
+                  <span class="stat-pill success">+25m goal</span>
+                </div>
+                <span class="stat-caption" id="dashPomodoroCount">0 Pomodoro Sessions</span>
+              </div>
+            </article>
+
+            <article class="stat-card">
+              <div class="stat-icon-wrapper rose">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              </div>
+              <div class="stat-details">
+                <span class="stat-title">Upcoming Deadlines</span>
+                <div class="stat-metric-row">
+                  <span class="stat-number" id="dashUrgentTasks">0</span>
+                  <span class="stat-subtext">Due in 48h</span>
+                </div>
+                <span class="stat-caption text-rose" id="dashOverdueNotice">0 Overdue Tasks</span>
+              </div>
+            </article>
+
+            <article class="stat-card">
+              <div class="stat-icon-wrapper purple">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              </div>
+              <div class="stat-details">
+                <span class="stat-title">Active Subjects</span>
+                <div class="stat-metric-row">
+                  <span class="stat-number" id="dashSubjectCount">0</span>
+                  <span class="stat-subtext">Courses</span>
+                </div>
+                <span class="stat-caption" id="dashTopSubject">Top: Computer Science</span>
+              </div>
+            </article>
+          </div>
+
+          <!-- Dashboard Content Grid: Today's Tasks & Mini Focus Timer -->
+          <div class="dashboard-split-grid">
+            
+            <!-- Left Side: Today's High Priority Agenda -->
+            <div class="card agenda-card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Today's Priority Agenda</h3>
+                  <p class="card-subtitle">Urgent tasks and items due today</p>
+                </div>
+                <button class="btn btn-sm btn-ghost" id="viewAllTasksBtn">View All</button>
+              </div>
+              <div class="card-body">
+                <ul class="task-mini-list" id="dashTodayTasksList">
+                  <!-- Populated via JavaScript -->
+                </ul>
+              </div>
+            </div>
+
+            <!-- Right Side: Mini Focus & Quick Log -->
+            <div class="card mini-pomodoro-card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Quick Focus Timer</h3>
+                  <p class="card-subtitle">Stay in the flow state</p>
+                </div>
+                <button class="btn btn-sm btn-outline" id="goToPomodoroBtn">Expand</button>
+              </div>
+              <div class="card-body text-center">
+                <div class="mini-timer-circle">
+                  <span class="mini-timer-time" id="dashTimerDisplay">25:00</span>
+                  <span class="mini-timer-label" id="dashTimerMode">Pomodoro</span>
+                </div>
+                <div class="mini-timer-controls">
+                  <button class="btn btn-primary" id="dashTimerToggleBtn">Start Focus</button>
+                  <button class="btn btn-secondary" id="dashTimerResetBtn">Reset</button>
+                </div>
+                <div class="mini-active-task-container">
+                  <span class="mini-task-label">Active Task:</span>
+                  <span class="mini-task-name" id="dashActiveTaskName">General Study Session</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 2: TASK MANAGEMENT & KANBAN BOARD    -->
+        <!-- ========================================== -->
+        <section class="view-section" id="view-tasks" aria-label="Task Management and Board">
+          
+          <!-- Filters & Actions Header Toolbar -->
+          <div class="toolbar-card card">
+            <div class="toolbar-row">
+              
+              <!-- Search Input with Debounced Realtime Filtering -->
+              <div class="search-input-wrapper">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="search" id="taskSearchInput" placeholder="Search tasks by title, note, or subject..." aria-label="Search study tasks">
+              </div>
+
+              <!-- Toolbar Filters -->
+              <div class="filter-controls">
+                
+                <!-- Subject Filter -->
+                <div class="select-wrapper">
+                  <label for="filterSubject" class="sr-only">Filter by Subject</label>
+                  <select id="filterSubject" aria-label="Filter tasks by subject">
+                    <option value="all">All Subjects</option>
+                  </select>
+                </div>
+
+                <!-- Priority Filter -->
+                <div class="select-wrapper">
+                  <label for="filterPriority" class="sr-only">Filter by Priority</label>
+                  <select id="filterPriority" aria-label="Filter tasks by priority">
+                    <option value="all">All Priorities</option>
+                    <option value="high">High Priority</option>
+                    <option value="medium">Medium Priority</option>
+                    <option value="low">Low Priority</option>
+                  </select>
+                </div>
+
+                <!-- Sort Control -->
+                <div class="select-wrapper">
+                  <label for="sortTasksBy" class="sr-only">Sort Tasks By</label>
+                  <select id="sortTasksBy" aria-label="Sort tasks">
+                    <option value="date-asc">Due Date (Earliest)</option>
+                    <option value="date-desc">Due Date (Latest)</option>
+                    <option value="priority-desc">Priority (High to Low)</option>
+                    <option value="title-asc">Title (A-Z)</option>
+                  </select>
+                </div>
+
+                <!-- View Switcher (List vs Kanban) -->
+                <div class="view-toggle-group" role="radiogroup" aria-label="Task view mode">
+                  <button class="view-toggle-btn active" id="btnListView" data-mode="list" aria-label="List View" title="List View">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                  </button>
+                  <button class="view-toggle-btn" id="btnKanbanView" data-mode="kanban" aria-label="Kanban Board View" title="Kanban Board View">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="18" rx="1"></rect><rect x="14" y="3" width="7" height="18" rx="1"></rect></svg>
+                  </button>
+                </div>
+
+                <button class="btn btn-primary" id="openTaskModalBtn">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                  <span>Add Task</span>
+                </button>
+              </div>
+
+            </div>
+
+            <!-- Active Filter Badges Bar -->
+            <div class="active-filters-bar" id="activeFiltersBar" style="display:none;">
+              <span class="active-filters-label">Active filters:</span>
+              <div class="filter-chips" id="filterChipsContainer"></div>
+              <button class="btn-clear-filters" id="clearAllFiltersBtn">Clear All</button>
+            </div>
+          </div>
+
+          <!-- Container 1: Standard List View -->
+          <div class="task-view-container" id="tasksListContainer">
+            <div class="task-list-table card">
+              <div class="table-responsive">
+                <table class="tasks-table" aria-label="Study Tasks Table">
+                  <thead>
+                    <tr>
+                      <th scope="col" style="width: 48px;">Done</th>
+                      <th scope="col">Task & Details</th>
+                      <th scope="col">Subject</th>
+                      <th scope="col">Priority</th>
+                      <th scope="col">Due Date</th>
+                      <th scope="col">Est. Time</th>
+                      <th scope="col" class="text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tasksTableBody">
+                    <!-- Populated via JavaScript -->
+                  </tbody>
+                </table>
+              </div>
+              <div class="empty-state" id="tasksListEmptyState" style="display: none;">
+                <div class="empty-icon">📝</div>
+                <h4>No Study Tasks Found</h4>
+                <p>Create a task to kickstart your study session or adjust your search filters.</p>
+                <button class="btn btn-primary btn-sm" id="emptyStateAddBtn">+ Create New Task</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Container 2: Interactive Kanban Drag-and-Drop Board View -->
+          <div class="task-view-container" id="tasksKanbanContainer" style="display:none;">
+            <div class="kanban-board">
+              
+              <!-- Column: To Do -->
+              <div class="kanban-col" data-status="todo">
+                <div class="kanban-col-header todo-header">
+                  <div class="col-title-group">
+                    <span class="col-dot dot-todo"></span>
+                    <h3 class="kanban-col-title">To Do</h3>
+                  </div>
+                  <span class="col-count" id="kanbanCountTodo">0</span>
+                </div>
+                <div class="kanban-dropzone" id="kanbanDropTodo" data-status="todo" aria-label="To Do Tasks Dropzone">
+                  <!-- Task Cards Injected Here -->
+                </div>
+              </div>
+
+              <!-- Column: In Progress -->
+              <div class="kanban-col" data-status="in-progress">
+                <div class="kanban-col-header in-progress-header">
+                  <div class="col-title-group">
+                    <span class="col-dot dot-progress"></span>
+                    <h3 class="kanban-col-title">In Progress</h3>
+                  </div>
+                  <span class="col-count" id="kanbanCountProgress">0</span>
+                </div>
+                <div class="kanban-dropzone" id="kanbanDropProgress" data-status="in-progress" aria-label="In Progress Tasks Dropzone">
+                  <!-- Task Cards Injected Here -->
+                </div>
+              </div>
+
+              <!-- Column: Completed -->
+              <div class="kanban-col" data-status="completed">
+                <div class="kanban-col-header completed-header">
+                  <div class="col-title-group">
+                    <span class="col-dot dot-completed"></span>
+                    <h3 class="kanban-col-title">Completed</h3>
+                  </div>
+                  <span class="col-count" id="kanbanCountCompleted">0</span>
+                </div>
+                <div class="kanban-dropzone" id="kanbanDropCompleted" data-status="completed" aria-label="Completed Tasks Dropzone">
+                  <!-- Task Cards Injected Here -->
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 3: WEEKLY SCHEDULE & TIMETABLE       -->
+        <!-- ========================================== -->
+        <section class="view-section" id="view-timetable" aria-label="Weekly Study Schedule">
+          <div class="card timetable-card">
+            <div class="card-header timetable-header">
+              <div>
+                <h3 class="card-title">Weekly Study Timetable</h3>
+                <p class="card-subtitle">Visualize your deadlines and study commitments across the week</p>
+              </div>
+              <div class="timetable-actions">
+                <button class="btn btn-secondary btn-sm" id="printTimetableBtn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                  <span>Print Schedule</span>
+                </button>
+                <button class="btn btn-primary btn-sm" id="timetableAddTaskBtn">
+                  + Add Scheduled Task
+                </button>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="timetable-week-nav">
+                <button class="icon-btn-sm" id="prevWeekBtn" aria-label="Previous week">◀</button>
+                <span class="current-week-label" id="currentWeekRange">This Week</span>
+                <button class="icon-btn-sm" id="nextWeekBtn" aria-label="Next week">▶</button>
+              </div>
+
+              <!-- 7-Day Visual Timetable Grid -->
+              <div class="weekly-grid-container" id="weeklyGridContainer">
+                <!-- Dynamically generated 7 columns via JS -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 4: POMODORO FOCUS TIMER              -->
+        <!-- ========================================== -->
+        <section class="view-section" id="view-pomodoro" aria-label="Pomodoro Focus Timer">
+          <div class="pomodoro-layout">
+            
+            <!-- Center Timer Module -->
+            <div class="card pomodoro-main-card">
+              <div class="pomodoro-tabs" role="tablist">
+                <button class="timer-tab active" data-mode="pomodoro" role="tab" aria-selected="true" id="tabPomodoro">Pomodoro (25m)</button>
+                <button class="timer-tab" data-mode="shortBreak" role="tab" aria-selected="false" id="tabShortBreak">Short Break (5m)</button>
+                <button class="timer-tab" data-mode="longBreak" role="tab" aria-selected="false" id="tabLongBreak">Long Break (15m)</button>
+              </div>
+
+              <!-- Circular Progress SVG Ring -->
+              <div class="timer-circle-container">
+                <svg class="timer-svg" viewBox="0 0 320 320" width="300" height="300" aria-hidden="true">
+                  <circle class="timer-circle-bg" cx="160" cy="160" r="140"></circle>
+                  <circle class="timer-circle-progress" id="timerCircleProgress" cx="160" cy="160" r="140"></circle>
+                </svg>
+                <div class="timer-display-inner">
+                  <span class="timer-digits" id="timerBigDisplay">25:00</span>
+                  <span class="timer-state-label" id="timerCurrentStatus">Focus Session</span>
+                  <div class="timer-sound-indicator" id="timerAudioToggle" title="Audio chime enabled">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                    <span>Sound On</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Timer Controls -->
+              <div class="timer-actions-row">
+                <button class="btn btn-secondary btn-lg" id="timerResetBtn" title="Reset current session">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+                  <span>Reset</span>
+                </button>
+                <button class="btn btn-primary btn-xl" id="timerToggleBtn" title="Start/Pause Timer">
+                  <svg class="play-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                  <svg class="pause-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                  <span id="timerBtnText">Start Focus</span>
+                </button>
+                <button class="btn btn-secondary btn-lg" id="timerSkipBtn" title="Skip to next session">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
+                  <span>Skip</span>
+                </button>
+              </div>
+
+              <!-- Task Linker -->
+              <div class="timer-task-linker">
+                <label for="timerTaskSelect">Focusing on:</label>
+                <select id="timerTaskSelect" class="form-select">
+                  <option value="">General Study (No Specific Task)</option>
+                </select>
+              </div>
+
+            </div>
+
+            <!-- Timer Settings & Daily Focus Stats -->
+            <div class="pomodoro-side-panel">
+              
+              <div class="card timer-stats-card">
+                <h3 class="card-title">Today's Focus Stats</h3>
+                <div class="session-stats-list">
+                  <div class="session-stat-item">
+                    <span class="session-stat-label">Pomodoros Finished</span>
+                    <span class="session-stat-value" id="pomodorosCompletedCount">0</span>
+                  </div>
+                  <div class="session-stat-item">
+                    <span class="session-stat-label">Minutes in Deep Focus</span>
+                    <span class="session-stat-value" id="pomodoroMinutesCount">0 min</span>
+                  </div>
+                  <div class="session-stat-item">
+                    <span class="session-stat-label">Daily Target (4h)</span>
+                    <div class="mini-progress-track">
+                      <div class="mini-progress-fill" id="dailyPomodoroProgress" style="width: 0%"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Custom Duration Settings Accordion -->
+              <div class="card timer-config-card">
+                <h3 class="card-title">Timer Duration Settings</h3>
+                <form id="timerSettingsForm" class="timer-settings-form">
+                  <div class="form-group-compact">
+                    <label for="inputFocusDuration">Focus (mins):</label>
+                    <input type="number" id="inputFocusDuration" min="1" max="120" value="25" class="form-input">
+                  </div>
+                  <div class="form-group-compact">
+                    <label for="inputShortBreak">Short Break (mins):</label>
+                    <input type="number" id="inputShortBreak" min="1" max="30" value="5" class="form-input">
+                  </div>
+                  <div class="form-group-compact">
+                    <label for="inputLongBreak">Long Break (mins):</label>
+                    <input type="number" id="inputLongBreak" min="1" max="60" value="15" class="form-input">
+                  </div>
+                  <button type="submit" class="btn btn-outline btn-sm btn-block">Apply Durations</button>
+                </form>
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 5: ANALYTICS & STUDY HABITS          -->
+        <!-- ========================================== -->
+        <section class="view-section" id="view-analytics" aria-label="Analytics and Study Habits">
+          
+          <div class="analytics-header-banner card">
+            <div>
+              <h2 class="card-title">Study Habit Analytics & Progress</h2>
+              <p class="card-subtitle">Data-driven insights rendered dynamically via HTML5 Canvas</p>
+            </div>
+            <div class="streak-badge-large">
+              <span class="badge-fire">🔥</span>
+              <div>
+                <span class="badge-days" id="analyticsStreakDays">3 Days</span>
+                <span class="badge-sub">Consecutive Study Streak</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts Grid (Pure Vanilla HTML5 Canvas - Zero Dependencies) -->
+          <div class="charts-grid">
+            
+            <!-- Chart 1: Study Time by Subject (Canvas Donut Chart) -->
+            <div class="card chart-card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Time Distribution by Subject</h3>
+                  <p class="card-subtitle">Hours dedicated per course</p>
+                </div>
+              </div>
+              <div class="card-body chart-body">
+                <div class="canvas-wrapper">
+                  <canvas id="subjectDonutChart" width="340" height="260" aria-label="Subject Distribution Donut Chart"></canvas>
+                </div>
+                <div class="chart-legend" id="subjectChartLegend">
+                  <!-- Dynamic Legend via JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Chart 2: Weekly Focus Activity (Canvas Bar Chart) -->
+            <div class="card chart-card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Weekly Focus Hours</h3>
+                  <p class="card-subtitle">Daily minutes tracked this week</p>
+                </div>
+              </div>
+              <div class="card-body chart-body">
+                <div class="canvas-wrapper">
+                  <canvas id="weeklyBarChart" width="460" height="260" aria-label="Weekly Activity Bar Chart"></canvas>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Study History Table / Completed Session Log -->
+          <div class="card history-card">
+            <div class="card-header">
+              <h3 class="card-title">Recent Study Log History</h3>
+              <button class="btn btn-ghost btn-sm" id="clearStudyHistoryBtn">Clear History</button>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="tasks-table" aria-label="Study History Log Table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Date & Time</th>
+                      <th scope="col">Session Description</th>
+                      <th scope="col">Duration</th>
+                      <th scope="col">Type</th>
+                    </tr>
+                  </thead>
+                  <tbody id="studyHistoryTableBody">
+                    <!-- Populated via JavaScript -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+      </main>
+
+      <!-- App Global Footer -->
+      <footer class="app-main-footer">
+        <p>© 2026 StudyFlow Web Application — Academic Collaborative Team Project. Built with Semantic HTML5, CSS3 & Modern JavaScript.</p>
+        <p class="footer-links">
+          <a href="#view-dashboard" class="footer-nav-link" data-view="dashboard">Dashboard</a> •
+          <a href="#view-tasks" class="footer-nav-link" data-view="tasks">Tasks</a> •
+          <a href="#view-pomodoro" class="footer-nav-link" data-view="pomodoro">Pomodoro</a> •
+          <a href="#view-analytics" class="footer-nav-link" data-view="analytics">Analytics</a>
+        </p>
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: ADD / EDIT STUDY TASK              -->
+  <!-- ========================================== -->
+  <dialog class="app-modal" id="taskModal" aria-labelledby="modalTaskTitle" aria-modal="true">
+    <div class="modal-dialog-content">
+      
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon-badge" aria-hidden="true">✏️</span>
+          <h3 class="modal-title" id="modalTaskTitle">Add New Study Task</h3>
+        </div>
+        <button class="modal-close-btn" id="closeTaskModalBtn" aria-label="Close task dialog">✕</button>
+      </div>
+
+      <!-- Semantic Form with Comprehensive Client Validation -->
+      <form id="taskForm" novalidate>
+        <input type="hidden" id="taskIdHidden">
+
+        <!-- Task Title -->
+        <div class="form-group">
+          <label for="taskTitle" class="form-label required">Task Title</label>
+          <input 
+            type="text" 
+            id="taskTitle" 
+            class="form-input" 
+            placeholder="e.g., Read Chapter 4 on Organic Chemistry"
+            required 
+            minlength="3" 
+            maxlength="120"
+            aria-describedby="taskTitleError"
+          >
+          <span class="form-error-msg" id="taskTitleError">Title must be at least 3 characters.</span>
+        </div>
+
+        <!-- Subject Selection and Creation -->
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="taskSubject" class="form-label required">Subject / Course</label>
+            <select id="taskSubject" class="form-select" required aria-describedby="taskSubjectError">
+              <option value="" disabled selected>Select Subject...</option>
+              <option value="Computer Science">Computer Science</option>
+              <option value="Mathematics">Mathematics</option>
+              <option value="Physics">Physics</option>
+              <option value="Literature">Literature</option>
+              <option value="Biology">Biology</option>
+              <option value="History">History</option>
+              <option value="Custom">+ Add Custom Subject...</option>
+            </select>
+            <span class="form-error-msg" id="taskSubjectError">Please select a subject.</span>
+          </div>
+
+          <!-- Custom Subject Input (Shows dynamically if "Custom" chosen) -->
+          <div class="form-group" id="customSubjectGroup" style="display:none;">
+            <label for="customSubjectInput" class="form-label required">Custom Subject Name</label>
+            <input type="text" id="customSubjectInput" class="form-input" placeholder="e.g. Artificial Intelligence" maxlength="40">
+          </div>
+
+          <!-- Priority -->
+          <div class="form-group">
+            <label for="taskPriority" class="form-label required">Priority Level</label>
+            <select id="taskPriority" class="form-select" required>
+              <option value="high">High Priority (Urgent / Exam)</option>
+              <option value="medium" selected>Medium Priority</option>
+              <option value="low">Low Priority (Flexible)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Due Date and Time -->
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="taskDueDate" class="form-label required">Due Date</label>
+            <input 
+              type="date" 
+              id="taskDueDate" 
+              class="form-input" 
+              required
+              aria-describedby="taskDueDateError"
+            >
+            <span class="form-error-msg" id="taskDueDateError">Please choose a valid due date.</span>
+          </div>
+
+          <div class="form-group">
+            <label for="taskDueTime" class="form-label">Due Time (Optional)</label>
+            <input type="time" id="taskDueTime" class="form-input">
+          </div>
+        </div>
+
+        <!-- Estimated Study Time & Status -->
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="taskEstimatedTime" class="form-label">Estimated Focus Time (Minutes)</label>
+            <input 
+              type="number" 
+              id="taskEstimatedTime" 
+              class="form-input" 
+              placeholder="e.g. 50" 
+              min="5" 
+              max="480" 
+              step="5"
+              value="50"
+              aria-describedby="taskTimeHelp"
+            >
+            <small class="form-help-text" id="taskTimeHelp">~2 Pomodoro sessions (25 min each)</small>
+          </div>
+
+          <div class="form-group">
+            <label for="taskStatus" class="form-label">Initial Status</label>
+            <select id="taskStatus" class="form-select">
+              <option value="todo" selected>To Do</option>
+              <option value="in-progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Task Notes / Details -->
+        <div class="form-group">
+          <label for="taskNotes" class="form-label">Study Notes & Resources</label>
+          <textarea 
+            id="taskNotes" 
+            class="form-textarea" 
+            rows="3" 
+            placeholder="Add relevant book pages, online links, rubric notes, or study guidelines..."
+            maxlength="500"
+          ></textarea>
+        </div>
+
+        <!-- Modal Actions -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelTaskModalBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="saveTaskBtn">
+            <span class="btn-text">Save Study Task</span>
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Global Toast Notification Container -->
+  <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Application Scripts (Modular Vanilla ES6+) -->
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/tasks.js"></script>
+  <script src="js/timer.js"></script>
+  <script src="js/analytics.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
